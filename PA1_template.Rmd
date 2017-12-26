@@ -1,25 +1,65 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproduceable Research - Course Project-1
+============================================
+Author: Narayan
 
+## Hitogram of number of steps taken per day
 
-## Loading and preprocessing the data
+```{r echo=FALSE}
+MyData <- read.csv(file="./data/activity.csv", header=TRUE, sep=",")
+MyData$date <- as.Date(MyData$date)
+totSteps <- with(MyData, tapply(steps, date, sum, na.rm = T)) 
+hist(totSteps, xlim = c(0,25000), ylim=c(0,30), main="Histogram of steps taken each day", breaks=10, las=1, border="blue", col="gray")
+```
+## Mean and Median of the total number of steps taken per day
 
+```{r showtable, results="asis", echo=FALSE}
+library(xtable)
 
+medianWithoutNA <- function(x) {
+   median(x[which(!is.na(x) & x > 0)])
+}
 
-## What is mean total number of steps taken per day?
+avgStepsPerDay <- with(MyData, tapply(steps, date, mean, na.rm = T))
+medStepsPerDay <- with(MyData, tapply(steps, date, median, na.rm = T))
+#d1 <- data.frame(date=names(avgStepsPerDay), avgSteps=avgStepsPerDay)
+d1 <- data.frame(avgSteps=avgStepsPerDay)
+d1$medSteps <- medStepsPerDay
+xt <- xtable(d1)
+names(xt) <- c('Mean of steps Taken per Day','Median of steps Taken per Day')
+print(xt, type="html" )
+```
 
+# Process data by intervals and plot time series charts
 
+```{r echo=FALSE}
+library(chron)
+p1 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]
+OctMean <- mean(p1$steps, na.rm=TRUE)
+MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]$steps = OctMean
 
-## What is the average daily activity pattern?
+p2 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]
+NovMean <- mean(p2$steps, na.rm=TRUE)
+MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]$steps = NovMean 
 
+WEMyData <- (MyData[is.weekend(MyData$date),])
+WDMyData <- (MyData[!is.weekend(MyData$date),])
+WEGraph <- tapply(WEMyData$steps,WEMyData$interval,mean)
+WDGraph <- tapply(WDMyData$steps,WDMyData$interval,mean)
+d2 <- data.frame(interval=names(WEGraph), avgSteps=WEGraph)
 
+par(mfrow=c(2,1), mgp=c(.25,.25,.25), mar=c(3, 3, 1, 1))
+plot(names(WEGraph), WEGraph, type="l", axes=FALSE, ann= FALSE, main="par(mar=c(1, 2, 2, 1))")
+axis(2, cex.axis=.7)
+box()
+mtext("Number of Steps", side=2, line=1.3)
+mtext("Weekend", side=3, line=0)
 
-## Imputing missing values
+plot(names(WDGraph), WDGraph, type = "l", axes=FALSE, ann= FALSE, main="par(mar=c(3, 2, 1, 1))")
+axis(1, cex.axis=.7)
+axis(2, cex.axis=.7)
+box()
+mtext("Interval", side=1, line=1.3)
+mtext("Number of Steps", side=2, line=1.3)
+mtext("Weekday", side=3, line=0)
 
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+```
