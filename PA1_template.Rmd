@@ -2,6 +2,8 @@
 ============================================
 Author: Narayan
 
+Modified date : 12/27/2017
+
 ## Hitogram of number of steps taken per day
 
 ```{r echo=FALSE}

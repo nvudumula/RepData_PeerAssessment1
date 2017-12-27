@@ -2,13 +2,15 @@
 ============================================
 Author: Narayan
 
+Modified date : 12/27/2017
+
 ## Hitogram of number of steps taken per day
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
 ## Mean and Median of the total number of steps taken per day
 
 <!-- html table generated in R 3.4.1 by xtable 1.8-2 package -->
-<!-- Wed Dec 27 00:12:42 2017 -->
+<!-- Wed Dec 27 01:48:14 2017 -->
 <table border=1>
 <tr> <th>  </th> <th> Mean of steps Taken per Day </th> <th> Median of steps Taken per Day </th>  </tr>
   <tr> <td align="right"> 2012-10-01 </td> <td align="right"> 37.46 </td> <td align="right"> 37.46 </td> </tr>
