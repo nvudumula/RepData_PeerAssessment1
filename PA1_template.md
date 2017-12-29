@@ -30,7 +30,7 @@ print(xt, type="html")
 ```
 
 <!-- html table generated in R 3.4.1 by xtable 1.8-2 package -->
-<!-- Thu Dec 28 23:55:55 2017 -->
+<!-- Thu Dec 28 23:59:47 2017 -->
 <table border=1>
 <tr> <th>  </th> <th> Date </th> <th> Mean of steps Taken per Day </th> <th> Median of steps Taken per Day </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -116,11 +116,11 @@ mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
 ```r
 maxMeanVal <- max(d2$avgSteps)
 intrname <- as.character(d2[d2$avgSteps==maxMeanVal,1]) ## Convert factor to charater before printing
-sprintf("5 minute interval that contains maximum number of steps (%f)on average: %s", maxMeanVal,intrname )
+sprintf("5 minute interval that contains maximum number of steps (%f)on average is : %s", maxMeanVal,intrname )
 ```
 
 ```
-## [1] "5 minute interval that contains maximum number of steps (206.169811)on average: 835"
+## [1] "5 minute interval that contains maximum number of steps (206.169811)on average is : 835"
 ```
 
 

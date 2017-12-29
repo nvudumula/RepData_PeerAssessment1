@@ -50,7 +50,7 @@ mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
 
 maxMeanVal <- max(d2$avgSteps)
 intrname <- as.character(d2[d2$avgSteps==maxMeanVal,1]) ## Convert factor to charater before printing
-sprintf("5 minute interval that contains maximum number of steps (%f)on average: %s", maxMeanVal,intrname )
+sprintf("5 minute interval that contains maximum number of steps (%f)on average is : %s", maxMeanVal,intrname )
 ```
 
 
