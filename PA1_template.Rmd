@@ -13,14 +13,51 @@ totSteps <- with(MyData, tapply(steps, date, sum, na.rm = T))
 hist(totSteps, xlim = c(0,25000), ylim=c(0,30), main="Histogram of steps taken each day", breaks=10, las=1, border="blue", col="gray", 
      xlab="Total Number of Steps taken")
 ```
-## Mean and Median of the total number of steps taken per day
 
-```{r showtable, results='asis', echo=FALSE}
+#### Calculate Mean and Median of the total number of steps taken per day
+#### print the values in an HTML table and create chart for Average number of steps taken per day.
+
+```{r showtable, results='asis', echo=TRUE}
 library(xtable)
 
 medianWithoutNA <- function(x) {
    median(x[which(!is.na(x) & x > 0)])
 }
+
+avgStepsPerDay <- with(MyData, tapply(steps, date, mean, na.rm = T))
+medStepsPerDay <- with(MyData, tapply(steps, date, medianWithoutNA))
+d1 <- data.frame(date = names(avgStepsPerDay), avgSteps=avgStepsPerDay)
+d1$medSteps <- medStepsPerDay
+rownames(d1) <- c()
+xt <- xtable(d1)
+names(xt) <- c('Date', 'Mean of steps Taken per Day','Median of steps Taken per Day')
+print(xt, type="html")
+
+plot(as.Date(names(avgStepsPerDay),"%Y-%m-%d"),avgStepsPerDay, type="l", xlab="Activity Dates", ylab="Averages steps per Day") ## Time series plot
+mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
+```
+
+#### Calculate and print the 5 minute interval that on average contains the max number of steps
+#### Step1 : calculated mean value per each 5 minute interval
+#### Step 2: find the max value of the mean values and the corresponding interval value
+#### Step 3: print both values
+
+```{r echo=TRUE}
+avgStepsPerInterval <- with(MyData, tapply(steps, interval, mean, na.rm = T))
+d2 <- data.frame(interval = names(avgStepsPerInterval), avgSteps=avgStepsPerInterval)
+maxMeanVal <- max(d2$avgSteps)
+intrname <- as.character(d2[d2$avgSteps==maxMeanVal,1])
+sprintf("5 minute interval that contains maximum number of steps (%f)on average: %s", maxMeanVal,intrname )
+```
+
+
+#### Impute values for missing values by filling in monthly mean values
+#### Calculate the total number of steps taken again and create a histogram again
+#### Process data by intervals and divide data into weekend and weekdays data sets. Plot time series charts
+
+```{r echo=TRUE}
+library(chron)
+
 p1 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]
 OctMean <- mean(p1$steps, na.rm=TRUE)
 MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]$steps = OctMean
@@ -29,27 +66,8 @@ p2 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]
 NovMean <- mean(p2$steps, na.rm=TRUE)
 MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]$steps = NovMean 
 
-avgStepsPerDay <- with(MyData, tapply(steps, date, mean, na.rm = T))
-medStepsPerDay <- with(MyData, tapply(steps, date, median, na.rm = T))
-d1 <- data.frame(avgSteps=avgStepsPerDay)
-d1$medSteps <- medStepsPerDay
-xt <- xtable(d1)
-names(xt) <- c('Mean of steps Taken per Day','Median of steps Taken per Day')
-print(xt, type="html")
-
-plot(as.Date(names(avgStepsPerDay),"%Y-%m-%d"),avgStepsPerDay, type="l", xlab="Activity Dates", ylab="Averages steps per Day") ## Time series plot
-mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
-```
-
-
-#### Calculate the total number of steps taken again and create a histogram again
-#### Process data by intervals and divide data into weekend and weekdays data sets. Plot time series charts
-
-```{r echo=FALSE}
-library(chron)
-
 totSteps <- with(MyData, tapply(steps, date, sum, na.rm = T)) 
-hist(totSteps, xlim = c(0,25000), ylim=c(0,30), main="Histogram of steps taken each day", breaks=10, las=1, border="blue", col="gray")
+hist(totSteps, xlim = c(0,25000), ylim=c(0,30), main="Histogram of steps taken each day (post imputing)", breaks=10, las=1, border="blue", col="gray")
 
 WEMyData <- (MyData[is.weekend(MyData$date),])
 WDMyData <- (MyData[!is.weekend(MyData$date),])
