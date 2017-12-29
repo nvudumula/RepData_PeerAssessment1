@@ -9,7 +9,7 @@ Modified date : 12/27/2017
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
 
 #### Calculate Mean and Median of the total number of steps taken per day
-#### print the values in an HTML table and create chart for Average number of steps taken per day.
+#### print the values in an HTML table 
 
 
 ```r
@@ -30,7 +30,7 @@ print(xt, type="html")
 ```
 
 <!-- html table generated in R 3.4.1 by xtable 1.8-2 package -->
-<!-- Thu Dec 28 22:58:10 2017 -->
+<!-- Thu Dec 28 23:55:55 2017 -->
 <table border=1>
 <tr> <th>  </th> <th> Date </th> <th> Mean of steps Taken per Day </th> <th> Median of steps Taken per Day </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -96,24 +96,26 @@ print(xt, type="html")
   <tr> <td align="right"> 61 </td> <td> 2012-11-30 </td> <td align="right">  </td> <td align="right">  </td> </tr>
    </table>
 
-```r
-plot(as.Date(names(avgStepsPerDay),"%Y-%m-%d"),avgStepsPerDay, type="l", xlab="Activity Dates", ylab="Averages steps per Day") ## Time series plot
-mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
-```
-
-![plot of chunk showtable](figure/showtable-1.png)
-
-#### Calculate and print the 5 minute interval that on average contains the max number of steps
-#### Step1 : calculated mean value per each 5 minute interval
-#### Step 2: find the max value of the mean values and the corresponding interval value
-#### Step 3: print both values
+#### Calculate average number of steps taken in each 5 minute interval across all days 
+#### store values in a data frame
+#### plot the time series chart
+#### Calculate mean value per each 5 minute interval
+#### Find the max value of the mean values and the corresponding interval value
+#### Print both values
 
 
 ```r
 avgStepsPerInterval <- with(MyData, tapply(steps, interval, mean, na.rm = T))
 d2 <- data.frame(interval = names(avgStepsPerInterval), avgSteps=avgStepsPerInterval)
+plot(as.integer(as.character(d2$interval)), d2$avgSteps,type="l", xlab="Interval", ylab="Averages steps") ## Time series plot. Covert interval from factor to Int.
+mtext("Time Series Chart - Average number of steps per day",side=3, line=2)
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+
+```r
 maxMeanVal <- max(d2$avgSteps)
-intrname <- as.character(d2[d2$avgSteps==maxMeanVal,1])
+intrname <- as.character(d2[d2$avgSteps==maxMeanVal,1]) ## Convert factor to charater before printing
 sprintf("5 minute interval that contains maximum number of steps (%f)on average: %s", maxMeanVal,intrname )
 ```
 
@@ -122,7 +124,7 @@ sprintf("5 minute interval that contains maximum number of steps (%f)on average:
 ```
 
 
-#### Impute values for missing values by filling in monthly mean values
+#### Impute values for missing values by filling in monthly mean values. you can go to day or interval level as well if you want to.
 #### Calculate the total number of steps taken again and create a histogram again
 #### Process data by intervals and divide data into weekend and weekdays data sets. Plot time series charts
 
@@ -131,12 +133,12 @@ sprintf("5 minute interval that contains maximum number of steps (%f)on average:
 library(chron)
 
 p1 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]
-OctMean <- mean(p1$steps, na.rm=TRUE)
-MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]$steps = OctMean
+OctMean <- mean(p1$steps, na.rm=TRUE) ## Calculate Oct mean
+MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "10",]$steps = OctMean ## fill all NA values with Oct mean
 
 p2 <- MyData[!is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]
-NovMean <- mean(p2$steps, na.rm=TRUE)
-MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]$steps = NovMean 
+NovMean <- mean(p2$steps, na.rm=TRUE) ## Calculate Nov mean
+MyData[is.na(MyData$steps) & as.character(MyData$date,"%m") == "11",]$steps = NovMean ## fill all NA values with Nov mean
 
 totSteps <- with(MyData, tapply(steps, date, sum, na.rm = T)) 
 hist(totSteps, xlim = c(0,25000), ylim=c(0,30), main="Histogram of steps taken each day (post imputing)", breaks=10, las=1, border="blue", col="gray")
